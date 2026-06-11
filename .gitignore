@@ -12,3 +12,7 @@ env/
 # Local editor settings
 .vscode/
 .idea/
+
+# Prompt/chat transcript exports
+fakejobs-codexprompts.docx
+fakejobs-codexprompts.md
