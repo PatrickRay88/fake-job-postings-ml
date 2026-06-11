@@ -1,0 +1,40 @@
+# Fake Job Postings ML Project
+
+Exploratory data analysis and classic machine learning model comparison for an imbalanced fake job postings dataset.
+
+## Files
+
+- `job_postings_eda_model_comparison.ipynb`: local notebook with saved outputs.
+- `job_postings_eda_model_comparison_colab.ipynb`: Colab-friendly notebook.
+- `Data/fake_jobs_cleaned.csv`: cleaned and feature-engineered dataset.
+- `Data/fake_job_postings.csv`: original dataset.
+- `results/`: generated charts and summary CSVs from the local run.
+
+## Recommended Colab Workflow
+
+1. Open `job_postings_eda_model_comparison_colab.ipynb` in Google Colab.
+2. Run the setup cell.
+3. If Colab cannot find the CSV files through Google Drive, upload:
+   - `fake_jobs_cleaned.csv`
+   - `fake_job_postings.csv`
+4. Run the remaining cells.
+
+The Colab notebook displays charts and tables inside the notebook and does not write new result files.
+
+## Local Workflow
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Open and run:
+
+```bash
+jupyter notebook job_postings_eda_model_comparison.ipynb
+```
+
+## Project Angle
+
+The dataset is highly imbalanced, with fake postings making up about 4.84% of the rows. The project focuses on why accuracy is misleading for this task and compares classic machine learning models using imbalance-aware metrics such as average precision, ROC AUC, fake-class recall, and fake-class F1.
