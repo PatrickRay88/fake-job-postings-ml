@@ -8,6 +8,8 @@ The dataset is highly imbalanced: only about 4.84% of job postings are labeled f
 
 The highest-performing classic model by average precision was a linear SVM using TF-IDF text features plus metadata. The cleaned and feature-engineered dataset performed only slightly better than the original dataset. This indicates that most of the predictive signal came from the original text fields.
 
+For the recommended balanced Linear SVM on the cleaned data, fake-class precision was 86.36%, recall was 83.95%, and F1 was 85.12%. In practical terms, about 86 out of every 100 postings flagged as fake were actually fake, and the model caught about 84 out of every 100 fake postings in the dataset. The F1 score shows that these two abilities were reasonably well balanced.
+
 The project is framed as follows:
 
 **Fake job detection is not just a classification problem. It is an imbalanced classification problem where model selection depends on the precision-recall tradeoff for the rare fake class.**
@@ -155,7 +157,38 @@ Full table: [best_model_classification_reports.csv](results/tables/best_model_cl
 
 ![Original best model confusion matrix](results/figures/original_best_model_confusion_matrix.png)
 
-For the cleaned dataset, the balanced Linear SVM had fake-class recall of 0.8395 and fake-class precision of 0.8634. These values show that the model identified most fake postings while maintaining similar precision on the fake class.
+### What Precision, Recall, and F1 Mean in This Project
+
+The fake class is treated as the positive class. Therefore, all three metrics below describe the model's ability to identify fraudulent postings rather than its ability to identify the much more common legitimate postings.
+
+- **Fake precision** answers: *Of the postings the model flagged as fake, how many were actually fake?* The balanced Linear SVM's fake precision was 0.8636, or 86.36%. Thus, approximately 86 of every 100 flags were correct. The remaining flags were false positives: legitimate postings sent for review by mistake.
+
+- **Fake recall** answers: *Of all the fake postings in the dataset, how many did the model catch?* Recall was 0.8395, or 83.95%. Thus, the model detected approximately 84 of every 100 fake postings. The remaining fake postings were false negatives that the model incorrectly allowed through as real.
+
+- **Fake F1** combines fake precision and fake recall into one score using their harmonic mean:
+
+  `F1 = 2 x (precision x recall) / (precision + recall)`
+
+  The balanced Linear SVM's fake F1 was 0.8512, or 85.12%. A high F1 requires both precision and recall to be strong; one cannot fully compensate for a very weak value of the other. Here, the F1 score indicates a strong and fairly even balance between catching fraudulent postings and avoiding false alarms.
+
+### Confusion Matrix Interpretation
+
+At the default SVM decision threshold of 0.0000, the out-of-fold predictions across all 17,880 cleaned records produced the following counts:
+
+| Outcome | Count | Meaning |
+|---|---:|---|
+| True positive | 727 | Fake posting correctly flagged as fake |
+| False positive | 115 | Real posting incorrectly flagged as fake |
+| False negative | 139 | Fake posting incorrectly predicted as real |
+| True negative | 16,899 | Real posting correctly predicted as real |
+
+These counts provide a concrete interpretation of the metrics. Precision is `727 / (727 + 115) = 86.34%`, because 727 of the 842 fake flags were correct. Recall is `727 / (727 + 139) = 83.95%`, because the model caught 727 of the 866 genuinely fake postings. Small differences between the displayed precision values of 0.8634 and 0.8636 come from averaging scores across the five cross-validation folds versus calculating the score once from all combined out-of-fold predictions.
+
+### Why Accuracy Is Not Enough
+
+Only 866 of the 17,880 postings, or 4.84%, are fake. A model that labels every posting as real therefore obtains 95.16% accuracy while catching no fraud at all. This is exactly what the dummy majority baseline did: it had 95.16% accuracy but fake precision, fake recall, and fake F1 of 0.00.
+
+The balanced Linear SVM's 98.58% accuracy is useful supporting information, but its fake precision, recall, and F1 are more informative because they directly measure performance on the rare class that the project is trying to detect.
 
 ## Weighted vs Unweighted Linear Models
 
